@@ -5,9 +5,7 @@
   <title>Scoreboard</title>
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     html, body {
       margin: 0;
@@ -39,7 +37,6 @@
     }
 
     .teamBox {
-      position: relative;
       display: grid;
       grid-template-columns: 14px 1fr;
       border-radius: 16px;
@@ -49,9 +46,7 @@
       box-shadow: 0 8px 18px rgba(0,0,0,0.36);
     }
 
-    .colorBar {
-      background: var(--team-color);
-    }
+    .colorBar { background: var(--team-color); }
 
     .info {
       padding: 10px 12px;
@@ -87,7 +82,6 @@
       font-size: 21px;
       font-weight: 900;
       white-space: nowrap;
-      box-shadow: 0 0 10px rgba(0,0,0,0.25);
     }
 
     .scoreLine {
@@ -268,21 +262,13 @@
 
     function normalizeTeamName(name) {
       const teamName = String(name || "").trim();
-
-      if (teamName.includes("끼끼") || teamName.includes("끠끼")) {
-        return "끠끼 팀";
-      }
-
+      if (teamName.includes("끼끼") || teamName.includes("끠끼")) return "끠끼 팀";
       return teamName;
     }
 
     function getTeamStyle(teamName) {
       const key = Object.keys(TEAM_COLORS).find(name => teamName.includes(name));
-
-      return TEAM_COLORS[key] || {
-        color: "#ffffff",
-        text: "#111111"
-      };
+      return TEAM_COLORS[key] || { color: "#ffffff", text: "#111111" };
     }
 
     function getMedal(rank) {
@@ -302,13 +288,10 @@
       ];
 
       const found = teams.find(team => String(team.value || "").trim() === String(targetRank));
-
       return found ? found.name : "-";
     }
 
     function makePlaceBox(rankNumber, teamName) {
-      const style = getTeamStyle(teamName);
-
       if (teamName === "-") {
         return `
           <div class="placeBox">
@@ -317,6 +300,8 @@
           </div>
         `;
       }
+
+      const style = getTeamStyle(teamName);
 
       return `
         <div class="placeBox">
@@ -327,6 +312,20 @@
           </div>
         </div>
       `;
+    }
+
+    function getRoundNumber(roundName) {
+      const match = String(roundName || "").match(/\d+/);
+      return match ? Number(match[0]) : 999;
+    }
+
+    function hasRoundData(round) {
+      return (
+        String(round.murdoc || "").trim() !== "" ||
+        String(round.sutak || "").trim() !== "" ||
+        String(round.ujung || "").trim() !== "" ||
+        String(round.kkikki || "").trim() !== ""
+      );
     }
 
     function renderGame(gameId) {
@@ -344,17 +343,11 @@
       const game = GAME_DATA[gameId];
       if (!game) return;
 
-      const ROUND_COUNT = 5;
-      const roundMap = {};
+      const validRounds = game.rounds
+        .filter(round => hasRoundData(round))
+        .sort((a, b) => getRoundNumber(a.round) - getRoundNumber(b.round));
 
-      game.rounds.forEach(round => {
-        roundMap[String(round.round).trim()] = round;
-      });
-
-      for (let i = 1; i <= ROUND_COUNT; i++) {
-        const roundKey = `R${i}`;
-        const round = roundMap[roundKey] || {};
-
+      validRounds.forEach(round => {
         const first = getTeamByRank(round, 1);
         const second = getTeamByRank(round, 2);
         const third = getTeamByRank(round, 3);
@@ -364,7 +357,7 @@
         row.className = "roundRow";
 
         row.innerHTML = `
-          <div class="roundTitle">${roundKey}</div>
+          <div class="roundTitle">${round.round}</div>
           ${makePlaceBox(1, first)}
           ${makePlaceBox(2, second)}
           ${makePlaceBox(3, third)}
@@ -372,7 +365,7 @@
         `;
 
         rounds.appendChild(row);
-      }
+      });
     }
 
     async function loadScores() {
@@ -384,7 +377,6 @@
 
         const rows = data.scores || [];
         const board = document.getElementById("scoreboard");
-
         board.innerHTML = "";
 
         rows.forEach(item => {
@@ -394,19 +386,16 @@
 
           const box = document.createElement("div");
           box.className = "teamBox";
-
           box.style.setProperty("--team-color", style.color);
           box.style.setProperty("--text-color", style.text);
 
           box.innerHTML = `
             <div class="colorBar"></div>
-
             <div class="info">
               <div class="topLine">
                 <div class="team">${teamName}</div>
                 <div class="rank">${getMedal(rank)} ${rank}위</div>
               </div>
-
               <div class="scoreLine">
                 <div class="score">${item.score}</div>
                 <div class="point">점</div>
@@ -433,7 +422,6 @@
         });
 
         renderGame(CURRENT_GAME);
-
       } catch (error) {
         console.error(error);
       }
