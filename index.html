@@ -5,97 +5,92 @@
   <title>Scoreboard</title>
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     html, body {
       margin: 0;
       padding: 0;
       width: 1200px;
-      height: 260px;
+      height: 230px;
       background: transparent !important;
       font-family: "Malgun Gothic", "Apple SD Gothic Neo", Arial, sans-serif;
       overflow: hidden;
     }
 
-    body {
-      background-color: rgba(0, 0, 0, 0) !important;
-    }
-
     .scoreboard {
       width: 1200px;
-      height: 260px;
+      height: 230px;
       display: flex;
-      gap: 16px;
-      padding: 16px;
+      gap: 14px;
+      padding: 14px;
     }
 
     .card {
       flex: 1;
-      position: relative;
-      height: 228px;
-      border-radius: 20px;
-      background: rgba(18, 20, 27, 0.96);
-      border: 4px solid var(--team-color);
-      color: #ffffff;
+      height: 202px;
+      border-radius: 18px;
+      background: rgba(16, 18, 24, 0.96);
+      border: 3px solid var(--team-color);
       overflow: hidden;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.42);
+      color: white;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.38);
     }
 
-    .team {
-      height: 58px;
+    .top {
+      height: 54px;
       display: flex;
       align-items: center;
       justify-content: center;
       background: var(--team-color);
       color: var(--text-color);
-      font-size: 30px;
+      font-size: 29px;
       font-weight: 900;
       letter-spacing: -1px;
     }
 
-    .content {
-      height: 170px;
+    .middle {
+      height: 94px;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 14px;
+      gap: 6px;
+      border-bottom: 1px solid rgba(255,255,255,0.12);
     }
 
     .score {
-      font-size: 76px;
+      font-size: 70px;
       font-weight: 900;
-      line-height: 0.9;
+      line-height: 1;
       letter-spacing: -3px;
     }
 
-    .score span {
-      font-size: 30px;
-      margin-left: 4px;
-      letter-spacing: -1px;
-      opacity: 0.9;
+    .point {
+      font-size: 28px;
+      font-weight: 900;
+      opacity: 0.85;
+      transform: translateY(12px);
     }
 
-    .rank {
-      min-width: 150px;
-      height: 46px;
-      padding: 0 18px;
-      border-radius: 999px;
+    .bottom {
+      height: 54px;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 7px;
-      background: rgba(255,255,255,0.13);
-      border: 2px solid rgba(255,255,255,0.28);
-      font-size: 28px;
+      gap: 9px;
+      background: rgba(255,255,255,0.06);
+      font-size: 30px;
       font-weight: 900;
-      line-height: 1;
       white-space: nowrap;
     }
 
-    .rank-number {
+    .medal {
+      font-size: 30px;
+      line-height: 1;
+    }
+
+    .rank {
+      font-size: 30px;
+      line-height: 1;
       transform: translateY(-1px);
     }
   </style>
@@ -119,7 +114,7 @@
       const teamName = String(name || "").trim();
 
       if (teamName.includes("끼끼") || teamName.includes("끠끼")) {
-        return "끠끼";
+        return "끠끼 팀";
       }
 
       return teamName;
@@ -127,11 +122,7 @@
 
     function getTeamStyle(teamName) {
       const key = Object.keys(TEAM_COLORS).find(name => teamName.includes(name));
-
-      return TEAM_COLORS[key] || {
-        color: "#ffffff",
-        text: "#111111"
-      };
+      return TEAM_COLORS[key] || { color: "#ffffff", text: "#111111" };
     }
 
     function getMedal(rank) {
@@ -161,15 +152,16 @@
           card.style.setProperty("--text-color", style.text);
 
           card.innerHTML = `
-            <div class="team">${teamName}</div>
+            <div class="top">${teamName}</div>
 
-            <div class="content">
-              <div class="score">${item.score}<span>점</span></div>
+            <div class="middle">
+              <div class="score">${item.score}</div>
+              <div class="point">점</div>
+            </div>
 
-              <div class="rank">
-                <span>${getMedal(rank)}</span>
-                <span class="rank-number">${rank}위</span>
-              </div>
+            <div class="bottom">
+              <span class="medal">${getMedal(rank)}</span>
+              <span class="rank">${rank}위</span>
             </div>
           `;
 
