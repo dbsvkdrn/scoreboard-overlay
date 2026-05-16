@@ -243,6 +243,14 @@
       gap: 7px;
       font-size: 16px;
       font-weight: 900;
+      overflow: hidden;
+    }
+
+    .placeValue {
+      margin-left: auto;
+      color: rgba(255,255,255,0.75);
+      font-size: 14px;
+      font-weight: 900;
     }
 
     .teamDot {
@@ -289,6 +297,9 @@
     let CURRENT_GAME = "1";
     let PREV_STATE = {};
 
+    const HEIGHT_GAME_IDS = ["1"];
+    const HEIGHT_UNIT = "m";
+
     const TEAM_COLORS = {
       "머독": { color: "#E53935", text: "#ffffff" },
       "수탉": { color: "#F2F2F2", text: "#111111" },
@@ -318,17 +329,17 @@
 
     function getTeamByRank(round, targetRank) {
       const teams = [
-        { name: "머독 팀", value: round.murdoc },
-        { name: "수탉 팀", value: round.sutak },
-        { name: "우정잉 팀", value: round.ujung },
-        { name: "끠끼 팀", value: round.kkikki }
+        { name: "머독", value: round.murdoc },
+        { name: "수탉", value: round.sutak },
+        { name: "우정잉", value: round.ujung },
+        { name: "끠끼", value: round.kkikki }
       ];
 
       const found = teams.find(team => String(team.value || "").trim() === String(targetRank));
       return found ? found.name : "-";
     }
 
-    function makePlaceBox(rankNumber, teamName) {
+    function makePlaceBox(rankNumber, teamName, valueText = "") {
       if (teamName === "-") {
         return `
           <div class="placeBox">
@@ -345,7 +356,8 @@
           <div class="placeLabel">${rankNumber}위</div>
           <div class="placeTeam">
             <span class="teamDot" style="--dot-color:${style.color};"></span>
-            ${teamName}
+            <span>${teamName}</span>
+            ${valueText ? `<span class="placeValue">${valueText}</span>` : ""}
           </div>
         </div>
       `;
@@ -365,6 +377,55 @@
       );
     }
 
+    function toNumber(value) {
+      const cleaned = String(value || "").replace(/[^\d.-]/g, "");
+      const num = Number(cleaned);
+      return Number.isFinite(num) ? num : null;
+    }
+
+    function formatHeight(value) {
+      const num = toNumber(value);
+      if (num === null) return "";
+      return `${num}${HEIGHT_UNIT}`;
+    }
+
+    function renderHeightRound(round) {
+      const teams = [
+        { name: "머독", value: round.murdoc },
+        { name: "수탉", value: round.sutak },
+        { name: "우정잉", value: round.ujung },
+        { name: "끠끼", value: round.kkikki }
+      ]
+      .filter(team => toNumber(team.value) !== null)
+      .sort((a, b) => toNumber(b.value) - toNumber(a.value));
+
+      const slots = [0, 1, 2, 3].map(index => {
+        const team = teams[index];
+
+        if (!team) {
+          return makePlaceBox(index + 1, "-");
+        }
+
+        return makePlaceBox(index + 1, team.name, formatHeight(team.value));
+      });
+
+      return slots.join("");
+    }
+
+    function renderRankRound(round) {
+      const first = getTeamByRank(round, 1);
+      const second = getTeamByRank(round, 2);
+      const third = getTeamByRank(round, 3);
+      const fourth = getTeamByRank(round, 4);
+
+      return `
+        ${makePlaceBox(1, first)}
+        ${makePlaceBox(2, second)}
+        ${makePlaceBox(3, third)}
+        ${makePlaceBox(4, fourth)}
+      `;
+    }
+
     function renderGame(gameId) {
       CURRENT_GAME = gameId;
 
@@ -380,25 +441,19 @@
       const game = GAME_DATA[gameId];
       if (!game) return;
 
+      const isHeightGame = HEIGHT_GAME_IDS.includes(String(gameId));
+
       const validRounds = game.rounds
         .filter(round => hasRoundData(round))
         .sort((a, b) => getRoundNumber(a.round) - getRoundNumber(b.round));
 
       validRounds.forEach(round => {
-        const first = getTeamByRank(round, 1);
-        const second = getTeamByRank(round, 2);
-        const third = getTeamByRank(round, 3);
-        const fourth = getTeamByRank(round, 4);
-
         const row = document.createElement("div");
         row.className = "roundRow";
 
         row.innerHTML = `
           <div class="roundTitle">${round.round}</div>
-          ${makePlaceBox(1, first)}
-          ${makePlaceBox(2, second)}
-          ${makePlaceBox(3, third)}
-          ${makePlaceBox(4, fourth)}
+          ${isHeightGame ? renderHeightRound(round) : renderRankRound(round)}
         `;
 
         rounds.appendChild(row);
