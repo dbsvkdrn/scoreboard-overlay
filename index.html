@@ -13,112 +13,152 @@
       margin: 0;
       padding: 0;
       width: 1200px;
-      height: 260px;
+      height: 300px;
       background: transparent !important;
-      font-family: "Malgun Gothic", "Apple SD Gothic Neo", Arial, sans-serif;
       overflow: hidden;
+      font-family: "Malgun Gothic", "Apple SD Gothic Neo", Arial, sans-serif;
     }
 
-    body {
-      background-color: rgba(0, 0, 0, 0) !important;
-    }
-
-    .scoreboard {
+    .wrap {
       width: 1200px;
-      height: 260px;
+      height: 300px;
+      padding: 18px;
       display: flex;
-      gap: 16px;
-      padding: 16px;
+      gap: 14px;
+      align-items: flex-end;
     }
 
-    .card {
+    .teamCard {
       flex: 1;
       position: relative;
-      height: 228px;
-      border-radius: 20px;
-      background: rgba(18, 20, 27, 0.96);
-      border: 4px solid var(--team-color);
-      color: #ffffff;
+      height: var(--card-height);
+      min-height: 170px;
+      border-radius: 22px 22px 10px 10px;
       overflow: hidden;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.42);
-    }
-
-    .team {
-      height: 58px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: var(--team-color);
-      color: var(--text-color);
-      font-size: 30px;
-      font-weight: 900;
-      letter-spacing: -1px;
-    }
-
-    .content {
-      height: 170px;
+      background: rgba(14,16,22,0.96);
+      border: 3px solid var(--team-color);
+      box-shadow: 0 10px 22px rgba(0,0,0,0.45);
       display: flex;
       flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .topGlow {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 85px;
+      background: linear-gradient(
+        180deg,
+        var(--team-color-glow),
+        rgba(255,255,255,0)
+      );
+      opacity: 0.35;
+      pointer-events: none;
+    }
+
+    .rankBox {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      min-width: 82px;
+      height: 42px;
+      border-radius: 999px;
+      background: rgba(0,0,0,0.45);
+      border: 2px solid rgba(255,255,255,0.16);
+      display: flex;
       align-items: center;
       justify-content: center;
-      gap: 14px;
+      gap: 5px;
+      color: white;
+      font-size: 20px;
+      font-weight: 900;
+      z-index: 2;
+      backdrop-filter: blur(6px);
+    }
+
+    .teamName {
+      position: relative;
+      padding-top: 24px;
+      text-align: center;
+      color: white;
+      font-size: 32px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      z-index: 1;
+    }
+
+    .scoreWrap {
+      position: relative;
+      padding-bottom: 20px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 5px;
+      z-index: 1;
     }
 
     .score {
-      font-size: 76px;
+      font-size: 78px;
       font-weight: 900;
-      line-height: 0.9;
-      letter-spacing: -3px;
+      line-height: 0.85;
+      letter-spacing: -4px;
+      color: white;
+      text-shadow: 0 0 16px rgba(255,255,255,0.12);
     }
 
-    .score span {
-      font-size: 30px;
-      margin-left: 4px;
-      letter-spacing: -1px;
-      opacity: 0.9;
-    }
-
-    .rank {
-      min-width: 150px;
-      height: 46px;
-      padding: 0 18px;
-      border-radius: 999px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 7px;
-      background: rgba(255,255,255,0.13);
-      border: 2px solid rgba(255,255,255,0.28);
-      font-size: 28px;
+    .point {
+      font-size: 26px;
       font-weight: 900;
-      line-height: 1;
-      white-space: nowrap;
+      color: rgba(255,255,255,0.7);
+      transform: translateY(-4px);
     }
 
-    .rank-number {
-      transform: translateY(-1px);
+    .baseBar {
+      width: 100%;
+      height: 10px;
+      background: var(--team-color);
     }
   </style>
 </head>
 
 <body>
-  <div class="scoreboard" id="scoreboard"></div>
+  <div class="wrap" id="scoreboard"></div>
 
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbxYSNLor6DXPKQFwKzBoszkXqHQWdp1FwaBwH3K1U9c1sn22Uqolb11t93BLOTrk6Gcow/exec";
 
     const TEAM_COLORS = {
-      "머독": { color: "#E53935", text: "#ffffff" },
-      "수탉": { color: "#F2F2F2", text: "#111111" },
-      "우정잉": { color: "#2979FF", text: "#ffffff" },
-      "끠끼": { color: "#FFD633", text: "#111111" },
-      "끼끼": { color: "#FFD633", text: "#111111" }
+      "머독": {
+        color: "#E53935",
+        glow: "rgba(229,57,53,0.95)"
+      },
+      "수탉": {
+        color: "#F2F2F2",
+        glow: "rgba(255,255,255,0.9)"
+      },
+      "우정잉": {
+        color: "#2979FF",
+        glow: "rgba(41,121,255,0.95)"
+      },
+      "끠끼": {
+        color: "#FFD633",
+        glow: "rgba(255,214,51,0.95)"
+      },
+      "끼끼": {
+        color: "#FFD633",
+        glow: "rgba(255,214,51,0.95)"
+      }
     };
 
     function normalizeTeamName(name) {
       const teamName = String(name || "").trim();
 
-      if (teamName.includes("끼끼") || teamName.includes("끠끼")) {
+      if (
+        teamName.includes("끼끼") ||
+        teamName.includes("끠끼")
+      ) {
         return "끠끼 팀";
       }
 
@@ -126,11 +166,12 @@
     }
 
     function getTeamStyle(teamName) {
-      const key = Object.keys(TEAM_COLORS).find(name => teamName.includes(name));
+      const key = Object.keys(TEAM_COLORS)
+        .find(name => teamName.includes(name));
 
       return TEAM_COLORS[key] || {
         color: "#ffffff",
-        text: "#111111"
+        glow: "rgba(255,255,255,0.9)"
       };
     }
 
@@ -140,6 +181,13 @@
       if (rank === "3") return "🥉";
       if (rank === "4") return "☠️";
       return "";
+    }
+
+    function getHeightByRank(rank) {
+      if (rank === "1") return "260px";
+      if (rank === "2") return "235px";
+      if (rank === "3") return "210px";
+      return "185px";
     }
 
     async function loadScores() {
@@ -156,27 +204,48 @@
           const rank = String(item.rank || "");
 
           const card = document.createElement("div");
-          card.className = "card";
-          card.style.setProperty("--team-color", style.color);
-          card.style.setProperty("--text-color", style.text);
+          card.className = "teamCard";
+
+          card.style.setProperty(
+            "--team-color",
+            style.color
+          );
+
+          card.style.setProperty(
+            "--team-color-glow",
+            style.glow
+          );
+
+          card.style.setProperty(
+            "--card-height",
+            getHeightByRank(rank)
+          );
 
           card.innerHTML = `
-            <div class="team">${teamName}</div>
+            <div class="topGlow"></div>
 
-            <div class="content">
-              <div class="score">${item.score}<span>점</span></div>
-
-              <div class="rank">
-                <span>${getMedal(rank)}</span>
-                <span class="rank-number">${rank}위</span>
-              </div>
+            <div class="rankBox">
+              ${getMedal(rank)}
+              ${rank}위
             </div>
+
+            <div class="teamName">
+              ${teamName}
+            </div>
+
+            <div class="scoreWrap">
+              <div class="score">${item.score}</div>
+              <div class="point">점</div>
+            </div>
+
+            <div class="baseBar"></div>
           `;
 
           board.appendChild(card);
         });
+
       } catch (error) {
-        console.error("점수 데이터를 불러오지 못했습니다:", error);
+        console.error(error);
       }
     }
 
