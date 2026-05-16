@@ -7,7 +7,7 @@
     body {
       margin: 0;
       background: transparent;
-      font-family: 'Arial', sans-serif;
+      font-family: Arial, sans-serif;
       overflow: hidden;
     }
 
@@ -59,43 +59,12 @@
     }
   </style>
 </head>
+
 <body>
   <div class="scoreboard" id="scoreboard"></div>
 
   <script>
-    const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSQWFIY5L9KupJVT1L2Zsabdq6TbFDqwNbxChB0KXB_RMnpalAHPSi5s52ksh52ujXB__o35U1-4w8A/pub?gid=501636782&single=true&output=csv";
-
-    async function loadScores() {
-      const res = await fetch(CSV_URL + "&cache=" + Date.now());
-      const text = await res.text();
-
-      const rows = text.trim().split("\n").slice(1).map(row => {
-        const cols = row.split(",");
-        return {
-          team: cols[0],
-          score: cols[1],
-          rank: cols[2],
-          color: cols[3] || "#ffffff"
-        };
-      });
-
-      const board = document.getElementById("scoreboard");
-      board.innerHTML = "";
-
-      rows.forEach(item => {
-        const card = document.createElement("div");
-        card.className = "card";
-        card.style.setProperty("--team-color", item.color);
-
-        card.innerHTML = `
-          <div class="team">${item.team}</div>
-          <div class="score">${item.score}<span>점</span></div>
-          <div class="rank">${getMedal(item.rank)} ${item.rank}위</div>
-        `;
-
-        board.appendChild(card);
-      });
-    }
+    const API_URL = "https://script.google.com/macros/s/AKfycbxYSNLor6DXPKQFwKzBoszkXqHQWdp1FwaBwH3K1U9c1sn22Uqolb11t93BLOTrk6Gcow/exec";
 
     function getMedal(rank) {
       if (rank === "1") return "🥇";
@@ -105,8 +74,34 @@
       return "";
     }
 
+    async function loadScores() {
+      try {
+        const res = await fetch(API_URL + "?t=" + Date.now());
+        const rows = await res.json();
+
+        const board = document.getElementById("scoreboard");
+        board.innerHTML = "";
+
+        rows.forEach(item => {
+          const card = document.createElement("div");
+          card.className = "card";
+          card.style.setProperty("--team-color", item.color || "#ffffff");
+
+          card.innerHTML = `
+            <div class="team">${item.team}</div>
+            <div class="score">${item.score}<span>점</span></div>
+            <div class="rank">${getMedal(String(item.rank))} ${item.rank}위</div>
+          `;
+
+          board.appendChild(card);
+        });
+      } catch (error) {
+        console.error("점수 데이터를 불러오지 못했습니다:", error);
+      }
+    }
+
     loadScores();
-    setInterval(loadScores, 3000);
+    setInterval(loadScores, 1000);
   </script>
 </body>
 </html>
