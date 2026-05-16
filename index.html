@@ -11,7 +11,7 @@
       margin: 0;
       padding: 0;
       width: 1200px;
-      height: 230px;
+      height: 180px;
       background: transparent !important;
       font-family: "Malgun Gothic", "Apple SD Gothic Neo", Arial, sans-serif;
       overflow: hidden;
@@ -19,85 +19,115 @@
 
     .scoreboard {
       width: 1200px;
-      height: 230px;
+      height: 180px;
+      padding: 18px;
       display: flex;
-      gap: 14px;
-      padding: 14px;
+      flex-direction: column;
+      gap: 10px;
     }
 
-    .card {
-      flex: 1;
-      height: 202px;
-      border-radius: 18px;
-      background: rgba(16, 18, 24, 0.96);
-      border: 3px solid var(--team-color);
-      overflow: hidden;
-      color: white;
-      box-shadow: 0 8px 18px rgba(0,0,0,0.38);
-    }
-
-    .top {
-      height: 54px;
+    .title {
+      height: 34px;
       display: flex;
       align-items: center;
       justify-content: center;
+      border-radius: 999px;
+      background: rgba(10, 12, 18, 0.88);
+      color: white;
+      font-size: 18px;
+      font-weight: 900;
+      letter-spacing: 3px;
+      border: 1px solid rgba(255,255,255,0.18);
+    }
+
+    .rows {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      height: 100px;
+    }
+
+    .teamBox {
+      position: relative;
+      display: grid;
+      grid-template-columns: 14px 1fr;
+      border-radius: 16px;
+      overflow: hidden;
+      background: rgba(15, 17, 23, 0.94);
+      border: 2px solid rgba(255,255,255,0.16);
+      box-shadow: 0 8px 18px rgba(0,0,0,0.36);
+    }
+
+    .colorBar {
       background: var(--team-color);
-      color: var(--text-color);
-      font-size: 29px;
+    }
+
+    .info {
+      padding: 10px 12px;
+      display: grid;
+      grid-template-rows: 30px 1fr;
+    }
+
+    .topLine {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .team {
+      color: white;
+      font-size: 24px;
       font-weight: 900;
       letter-spacing: -1px;
+      white-space: nowrap;
     }
 
-    .middle {
-      height: 94px;
+    .rank {
+      min-width: 72px;
+      height: 30px;
+      border-radius: 999px;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
-      border-bottom: 1px solid rgba(255,255,255,0.12);
-    }
-
-    .score {
-      font-size: 70px;
-      font-weight: 900;
-      line-height: 1;
-      letter-spacing: -3px;
-    }
-
-    .point {
-      font-size: 28px;
-      font-weight: 900;
-      opacity: 0.85;
-      transform: translateY(12px);
-    }
-
-    .bottom {
-      height: 54px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 9px;
-      background: rgba(255,255,255,0.06);
-      font-size: 30px;
+      gap: 3px;
+      background: var(--team-color);
+      color: var(--text-color);
+      font-size: 18px;
       font-weight: 900;
       white-space: nowrap;
     }
 
-    .medal {
-      font-size: 30px;
-      line-height: 1;
+    .scoreLine {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 4px;
+      margin-top: 2px;
     }
 
-    .rank {
-      font-size: 30px;
-      line-height: 1;
-      transform: translateY(-1px);
+    .score {
+      color: white;
+      font-size: 52px;
+      font-weight: 900;
+      line-height: 0.9;
+      letter-spacing: -3px;
+    }
+
+    .point {
+      color: rgba(255,255,255,0.72);
+      font-size: 20px;
+      font-weight: 900;
+      transform: translateY(-3px);
     }
   </style>
 </head>
 
 <body>
-  <div class="scoreboard" id="scoreboard"></div>
+  <div class="scoreboard">
+    <div class="title">JONGGAMDONG SPORTS DAY SCOREBOARD</div>
+    <div class="rows" id="scoreboard"></div>
+  </div>
 
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbxYSNLor6DXPKQFwKzBoszkXqHQWdp1FwaBwH3K1U9c1sn22Uqolb11t93BLOTrk6Gcow/exec";
@@ -112,11 +142,7 @@
 
     function normalizeTeamName(name) {
       const teamName = String(name || "").trim();
-
-      if (teamName.includes("끼끼") || teamName.includes("끠끼")) {
-        return "끠끼 팀";
-      }
-
+      if (teamName.includes("끼끼") || teamName.includes("끠끼")) return "끠끼 팀";
       return teamName;
     }
 
@@ -146,26 +172,26 @@
           const style = getTeamStyle(teamName);
           const rank = String(item.rank || "");
 
-          const card = document.createElement("div");
-          card.className = "card";
-          card.style.setProperty("--team-color", style.color);
-          card.style.setProperty("--text-color", style.text);
+          const box = document.createElement("div");
+          box.className = "teamBox";
+          box.style.setProperty("--team-color", style.color);
+          box.style.setProperty("--text-color", style.text);
 
-          card.innerHTML = `
-            <div class="top">${teamName}</div>
-
-            <div class="middle">
-              <div class="score">${item.score}</div>
-              <div class="point">점</div>
-            </div>
-
-            <div class="bottom">
-              <span class="medal">${getMedal(rank)}</span>
-              <span class="rank">${rank}위</span>
+          box.innerHTML = `
+            <div class="colorBar"></div>
+            <div class="info">
+              <div class="topLine">
+                <div class="team">${teamName}</div>
+                <div class="rank">${getMedal(rank)} ${rank}위</div>
+              </div>
+              <div class="scoreLine">
+                <div class="score">${item.score}</div>
+                <div class="point">점</div>
+              </div>
             </div>
           `;
 
-          board.appendChild(card);
+          board.appendChild(box);
         });
       } catch (error) {
         console.error("점수 데이터를 불러오지 못했습니다:", error);
