@@ -2,60 +2,98 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
+
   <title>Scoreboard</title>
 
   <style>
-    * { box-sizing: border-box; }
+
+    * {
+      box-sizing: border-box;
+    }
 
     html, body {
       margin: 0;
       padding: 0;
       width: 1200px;
-      height: 180px;
       background: transparent !important;
-      font-family: "Malgun Gothic", "Apple SD Gothic Neo", Arial, sans-serif;
       overflow: hidden;
+      font-family:
+        "Malgun Gothic",
+        "Apple SD Gothic Neo",
+        Arial,
+        sans-serif;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
     }
 
     .scoreboard {
+
       width: 1200px;
-      height: 180px;
+
       padding: 18px;
+
       display: flex;
       flex-direction: column;
       gap: 10px;
     }
 
     .title {
+
       height: 34px;
+
       display: flex;
       align-items: center;
       justify-content: center;
+
       border-radius: 999px;
+
       background: rgba(10, 12, 18, 0.88);
+
       color: white;
+
       font-size: 18px;
       font-weight: 900;
+
       letter-spacing: 3px;
-      border: 1px solid rgba(255,255,255,0.18);
+
+      border:
+        1px solid rgba(255,255,255,0.18);
     }
 
     .rows {
+
       display: grid;
+
       grid-template-columns: repeat(4, 1fr);
+
       gap: 10px;
+
       height: 100px;
     }
 
     .teamBox {
+
       position: relative;
+
       display: grid;
+
       grid-template-columns: 14px 1fr;
+
       border-radius: 16px;
+
       overflow: hidden;
-      background: rgba(15, 17, 23, 0.94);
-      border: 2px solid rgba(255,255,255,0.16);
-      box-shadow: 0 8px 18px rgba(0,0,0,0.36);
+
+      background:
+        rgba(15, 17, 23, 0.94);
+
+      border:
+        2px solid rgba(255,255,255,0.16);
+
+      box-shadow:
+        0 8px 18px rgba(0,0,0,0.36);
     }
 
     .colorBar {
@@ -63,74 +101,279 @@
     }
 
     .info {
+
       padding: 10px 12px;
+
       display: grid;
+
       grid-template-rows: 30px 1fr;
     }
 
     .topLine {
+
       display: flex;
+
       align-items: center;
+
       justify-content: space-between;
+
       gap: 8px;
     }
 
     .team {
+
       color: white;
+
       font-size: 24px;
+
       font-weight: 900;
+
       letter-spacing: -1px;
+
       white-space: nowrap;
     }
 
     .rank {
+
       min-width: 72px;
+
       height: 30px;
+
       border-radius: 999px;
+
       display: flex;
+
       align-items: center;
+
       justify-content: center;
+
       gap: 3px;
+
       background: var(--team-color);
+
       color: var(--text-color);
+
       font-size: 18px;
+
       font-weight: 900;
+
       white-space: nowrap;
     }
 
     .scoreLine {
+
       display: flex;
+
       align-items: flex-end;
+
       justify-content: center;
+
       gap: 4px;
+
       margin-top: 2px;
     }
 
     .score {
+
       color: white;
+
       font-size: 52px;
+
       font-weight: 900;
+
       line-height: 0.9;
+
       letter-spacing: -3px;
     }
 
     .point {
-      color: rgba(255,255,255,0.72);
+
+      color:
+        rgba(255,255,255,0.72);
+
       font-size: 20px;
+
       font-weight: 900;
+
       transform: translateY(-3px);
     }
+
+    .detailToggle {
+
+      height: 40px;
+
+      border-radius: 14px;
+
+      background:
+        rgba(15,17,23,0.94);
+
+      border:
+        2px solid rgba(255,255,255,0.14);
+
+      color: white;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      cursor: pointer;
+
+      font-weight: 900;
+
+      font-size: 18px;
+
+      user-select: none;
+    }
+
+    .detailPanel {
+
+      overflow: hidden;
+
+      max-height: 0;
+
+      opacity: 0;
+
+      transition:
+        max-height 0.35s ease,
+        opacity 0.25s ease;
+
+      border-radius: 18px;
+
+      background:
+        rgba(15,17,23,0.94);
+
+      border:
+        2px solid rgba(255,255,255,0.14);
+    }
+
+    .detailPanel.open {
+
+      max-height: 700px;
+
+      opacity: 1;
+    }
+
+    .gameTabs {
+
+      display: flex;
+
+      gap: 10px;
+
+      padding: 14px;
+    }
+
+    .gameTab {
+
+      flex: 1;
+
+      height: 42px;
+
+      border-radius: 12px;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      background:
+        rgba(255,255,255,0.06);
+
+      color: white;
+
+      cursor: pointer;
+
+      font-weight: 900;
+    }
+
+    .gameTab.active {
+
+      background: #2979FF;
+    }
+
+    .rounds {
+
+      padding:
+        0 14px 14px 14px;
+
+      display: flex;
+
+      flex-direction: column;
+
+      gap: 8px;
+    }
+
+    .roundRow {
+
+      display: grid;
+
+      grid-template-columns:
+        70px repeat(4, 1fr);
+
+      gap: 10px;
+
+      align-items: center;
+
+      min-height: 42px;
+
+      border-radius: 12px;
+
+      background:
+        rgba(255,255,255,0.04);
+
+      padding: 0 12px;
+
+      color: white;
+
+      font-size: 16px;
+
+      font-weight: 700;
+    }
+
+    .roundTitle {
+
+      font-size: 18px;
+
+      font-weight: 900;
+    }
+
   </style>
 </head>
 
 <body>
+
   <div class="scoreboard">
-    <div class="title">2026 JONGGAMDONG SPORTS DAY SCOREBOARD</div>
+
+    <div class="title">
+      2026 JONGGAMDONG SPORTS DAY SCOREBOARD
+    </div>
+
     <div class="rows" id="scoreboard"></div>
+
+    <div class="detailToggle" id="toggleButton">
+      GAME DETAIL ▼
+    </div>
+
+    <div class="detailPanel" id="detailPanel">
+
+      <div class="gameTabs" id="gameTabs"></div>
+
+      <div class="rounds" id="rounds"></div>
+
+    </div>
+
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbxYSNLor6DXPKQFwKzBoszkXqHQWdp1FwaBwH3K1U9c1sn22Uqolb11t93BLOTrk6Gcow/exec";
+
+    const API_URL =
+      "https://script.google.com/macros/s/AKfycbxYSNLor6DXPKQFwKzBoszkXqHQWdp1FwaBwH3K1U9c1sn22Uqolb11t93BLOTrk6Gcow/exec";
+
+    let GAME_DATA = {};
+
+    let CURRENT_GAME = "1";
 
     const TEAM_COLORS = {
       "머독": { color: "#E53935", text: "#ffffff" },
@@ -141,65 +384,261 @@
     };
 
     function normalizeTeamName(name) {
-      const teamName = String(name || "").trim();
-      if (teamName.includes("끼끼") || teamName.includes("끠끼")) return "끠끼 팀";
+
+      const teamName =
+        String(name || "").trim();
+
+      if (
+        teamName.includes("끼끼") ||
+        teamName.includes("끠끼")
+      ) {
+        return "끠끼 팀";
+      }
+
       return teamName;
     }
 
     function getTeamStyle(teamName) {
-      const key = Object.keys(TEAM_COLORS).find(name => teamName.includes(name));
-      return TEAM_COLORS[key] || { color: "#ffffff", text: "#111111" };
+
+      const key =
+        Object.keys(TEAM_COLORS)
+        .find(name =>
+          teamName.includes(name)
+        );
+
+      return TEAM_COLORS[key] || {
+        color: "#ffffff",
+        text: "#111111"
+      };
     }
 
     function getMedal(rank) {
+
       if (rank === "1") return "🥇";
       if (rank === "2") return "🥈";
       if (rank === "3") return "🥉";
       if (rank === "4") return "☠️";
+
       return "";
     }
 
-    async function loadScores() {
-      try {
-        const res = await fetch(API_URL + "?t=" + Date.now());
-        const rows = await res.json();
+    function renderGame(gameId) {
 
-        const board = document.getElementById("scoreboard");
+      CURRENT_GAME = gameId;
+
+      const rounds =
+        document.getElementById("rounds");
+
+      rounds.innerHTML = "";
+
+      document
+        .querySelectorAll(".gameTab")
+        .forEach(tab => {
+          tab.classList.remove("active");
+        });
+
+      document
+        .querySelector(`[data-game="${gameId}"]`)
+        ?.classList.add("active");
+
+      const game =
+        GAME_DATA[gameId];
+
+      if (!game) return;
+
+      game.rounds.forEach(round => {
+
+        const row =
+          document.createElement("div");
+
+        row.className = "roundRow";
+
+        row.innerHTML = `
+          <div class="roundTitle">
+            ${round.round}
+          </div>
+
+          <div>
+            머독 ${round.murdoc || "-"}위
+          </div>
+
+          <div>
+            수탉 ${round.sutak || "-"}위
+          </div>
+
+          <div>
+            우정잉 ${round.ujung || "-"}위
+          </div>
+
+          <div>
+            끠끼 ${round.kkikki || "-"}위
+          </div>
+        `;
+
+        rounds.appendChild(row);
+
+      });
+
+    }
+
+    async function loadScores() {
+
+      try {
+
+        const res =
+          await fetch(
+            API_URL + "?t=" + Date.now()
+          );
+
+        const data =
+          await res.json();
+
+        GAME_DATA = data.games;
+
+        const rows =
+          data.scores;
+
+        const board =
+          document.getElementById("scoreboard");
+
         board.innerHTML = "";
 
         rows.forEach(item => {
-          const teamName = normalizeTeamName(item.team);
-          const style = getTeamStyle(teamName);
-          const rank = String(item.rank || "");
 
-          const box = document.createElement("div");
+          const teamName =
+            normalizeTeamName(item.team);
+
+          const style =
+            getTeamStyle(teamName);
+
+          const rank =
+            String(item.rank || "");
+
+          const box =
+            document.createElement("div");
+
           box.className = "teamBox";
-          box.style.setProperty("--team-color", style.color);
-          box.style.setProperty("--text-color", style.text);
+
+          box.style.setProperty(
+            "--team-color",
+            style.color
+          );
+
+          box.style.setProperty(
+            "--text-color",
+            style.text
+          );
 
           box.innerHTML = `
             <div class="colorBar"></div>
+
             <div class="info">
+
               <div class="topLine">
-                <div class="team">${teamName}</div>
-                <div class="rank">${getMedal(rank)} ${rank}위</div>
+
+                <div class="team">
+                  ${teamName}
+                </div>
+
+                <div class="rank">
+                  ${getMedal(rank)}
+                  ${rank}위
+                </div>
+
               </div>
+
               <div class="scoreLine">
-                <div class="score">${item.score}</div>
-                <div class="point">점</div>
+
+                <div class="score">
+                  ${item.score}
+                </div>
+
+                <div class="point">
+                  점
+                </div>
+
               </div>
+
             </div>
           `;
 
           board.appendChild(box);
+
         });
+
+        const tabs =
+          document.getElementById("gameTabs");
+
+        tabs.innerHTML = "";
+
+        Object.keys(GAME_DATA)
+          .forEach(gameId => {
+
+            const game =
+              GAME_DATA[gameId];
+
+            const tab =
+              document.createElement("div");
+
+            tab.className = "gameTab";
+
+            tab.dataset.game = gameId;
+
+            tab.innerText =
+              game.gameName;
+
+            tab.onclick =
+              () => renderGame(gameId);
+
+            tabs.appendChild(tab);
+
+          });
+
+        renderGame(CURRENT_GAME);
+
       } catch (error) {
-        console.error("점수 데이터를 불러오지 못했습니다:", error);
+
+        console.error(error);
+
       }
+
     }
 
+    const toggleButton =
+      document.getElementById("toggleButton");
+
+    const detailPanel =
+      document.getElementById("detailPanel");
+
+    let opened = false;
+
+    toggleButton.onclick = () => {
+
+      opened = !opened;
+
+      if (opened) {
+
+        detailPanel.classList.add("open");
+
+        toggleButton.innerText =
+          "GAME DETAIL ▲";
+
+      } else {
+
+        detailPanel.classList.remove("open");
+
+        toggleButton.innerText =
+          "GAME DETAIL ▼";
+
+      }
+
+    };
+
     loadScores();
+
     setInterval(loadScores, 1000);
+
   </script>
+
 </body>
 </html>
