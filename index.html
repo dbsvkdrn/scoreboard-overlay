@@ -318,10 +318,10 @@
 
     function getTeamByRank(round, targetRank) {
       const teams = [
-        { name: "머독", value: round.murdoc },
-        { name: "수탉", value: round.sutak },
-        { name: "우정잉", value: round.ujung },
-        { name: "끠끼", value: round.kkikki }
+        { name: "머독 팀", value: round.murdoc },
+        { name: "수탉 팀", value: round.sutak },
+        { name: "우정잉 팀", value: round.ujung },
+        { name: "끠끼 팀", value: round.kkikki }
       ];
 
       const found = teams.find(team => String(team.value || "").trim() === String(targetRank));
