@@ -229,11 +229,10 @@
       background: var(--dot-color);
     }
 /* =========================
-   등장 애니메이션만 유지
+   팀 카드
 ========================= */
 
 .teamBox {
-  animation: cardFade 0.45s ease;
 
   transition:
     transform 0.22s ease,
@@ -242,7 +241,9 @@
 }
 
 .teamBox:hover {
-  transform: translateY(-3px);
+
+  transform:
+    translateY(-3px);
 
   box-shadow:
     0 14px 28px rgba(0,0,0,0.42);
@@ -262,7 +263,8 @@
 
 .detailToggle:hover {
 
-  transform: translateY(-2px);
+  transform:
+    translateY(-2px);
 
   background:
     rgba(28,32,42,0.98);
@@ -285,7 +287,8 @@
 
 .gameTab:hover {
 
-  transform: translateY(-2px);
+  transform:
+    translateY(-2px);
 
   background:
     rgba(255,255,255,0.12);
@@ -304,9 +307,6 @@
 ========================= */
 
 .roundRow {
-
-  animation:
-    roundAppear 0.34s ease;
 
   transition:
     background 0.2s ease,
@@ -370,48 +370,6 @@
 
   transform:
     translateY(-4px) scaleY(0.98);
-}
-
-/* =========================
-   KEYFRAMES
-========================= */
-
-@keyframes cardFade {
-
-  from {
-
-    opacity: 0;
-
-    transform:
-      translateY(12px);
-  }
-
-  to {
-
-    opacity: 1;
-
-    transform:
-      translateY(0);
-  }
-}
-
-@keyframes roundAppear {
-
-  from {
-
-    opacity: 0;
-
-    transform:
-      translateY(6px);
-  }
-
-  to {
-
-    opacity: 1;
-
-    transform:
-      translateY(0px);
-  }
 }
   </style>
 </head>
