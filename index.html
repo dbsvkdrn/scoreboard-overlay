@@ -5,271 +5,201 @@
   <title>Scoreboard</title>
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     html, body {
       margin: 0;
       padding: 0;
       width: 1200px;
-      height: 280px;
+      height: 180px;
       background: transparent !important;
-      overflow: hidden;
       font-family: "Malgun Gothic", "Apple SD Gothic Neo", Arial, sans-serif;
-    }
-
-    body {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .board {
-      width: 1160px;
-      height: 240px;
-      border-radius: 30px;
-      background:
-        linear-gradient(
-          180deg,
-          rgba(28,32,44,0.96),
-          rgba(10,12,18,0.98)
-        );
-
-      border: 2px solid rgba(255,255,255,0.08);
-
-      backdrop-filter: blur(10px);
-
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
       overflow: hidden;
-
-      box-shadow:
-        0 18px 40px rgba(0,0,0,0.5),
-        inset 0 1px 0 rgba(255,255,255,0.05);
     }
 
-    .team {
-      position: relative;
+    .scoreboard {
+      width: 1200px;
+      height: 180px;
+      padding: 18px;
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      align-items: center;
-
-      border-right: 1px solid rgba(255,255,255,0.08);
+      gap: 10px;
     }
 
-    .team:last-child {
-      border-right: none;
+    .title {
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      background: rgba(10, 12, 18, 0.88);
+      color: white;
+      font-size: 18px;
+      font-weight: 900;
+      letter-spacing: 3px;
+      border: 1px solid rgba(255,255,255,0.18);
+    }
+
+    .rows {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      height: 100px;
+    }
+
+    .teamBox {
+      position: relative;
+      display: grid;
+      grid-template-columns: 14px 1fr;
+      border-radius: 16px;
+      overflow: hidden;
+      background: rgba(15, 17, 23, 0.94);
+      border: 2px solid rgba(255,255,255,0.16);
+      box-shadow: 0 8px 18px rgba(0,0,0,0.36);
+    }
+
+    .colorBar {
+      background: var(--team-color);
+    }
+
+    .info {
+      padding: 10px 12px;
+      display: grid;
+      grid-template-rows: 30px 1fr;
     }
 
     .topLine {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 8px;
-      background: var(--team-color);
-      box-shadow: 0 0 18px var(--team-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
     }
 
-    .medal {
-      font-size: 34px;
-      line-height: 1;
-      margin-bottom: 10px;
+    .team {
+      color: white;
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      white-space: nowrap;
     }
 
     .rank {
-      position: absolute;
-      top: 18px;
-      right: 18px;
-
-      width: 58px;
-      height: 58px;
-
-      border-radius: 50%;
-
-      background: rgba(255,255,255,0.06);
-
-      border: 2px solid rgba(255,255,255,0.12);
-
+      min-width: 72px;
+      height: 30px;
+      border-radius: 999px;
       display: flex;
       align-items: center;
       justify-content: center;
-
-      color: white;
-      font-size: 20px;
+      gap: 3px;
+      background: var(--team-color);
+      color: var(--text-color);
+      font-size: 18px;
       font-weight: 900;
-
-      backdrop-filter: blur(8px);
+      white-space: nowrap;
     }
 
-    .teamName {
-      color: white;
-      font-size: 31px;
-      font-weight: 900;
-      letter-spacing: -1px;
-      margin-bottom: 18px;
-      text-align: center;
-    }
-
-    .scoreWrap {
+    .scoreLine {
       display: flex;
       align-items: flex-end;
-      gap: 6px;
+      justify-content: center;
+      gap: 4px;
+      margin-top: 2px;
     }
 
     .score {
       color: white;
-      font-size: 88px;
+      font-size: 52px;
       font-weight: 900;
-      line-height: 0.82;
-      letter-spacing: -5px;
-      text-shadow:
-        0 0 18px rgba(255,255,255,0.08);
+      line-height: 0.9;
+      letter-spacing: -3px;
     }
 
     .point {
-      color: rgba(255,255,255,0.65);
-      font-size: 24px;
+      color: rgba(255,255,255,0.72);
+      font-size: 20px;
       font-weight: 900;
-      transform: translateY(-8px);
+      transform: translateY(-3px);
     }
-
-    .bottomBar {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 14px;
-      background: var(--team-color);
-      opacity: 0.95;
-    }
-
   </style>
 </head>
 
 <body>
-
-  <div class="board" id="scoreboard"></div>
+  <div class="scoreboard">
+    <div class="title">2026 JONGGAMDONG SPORTS DAY SCOREBOARD</div>
+    <div class="rows" id="scoreboard"></div>
+  </div>
 
   <script>
-
     const API_URL = "https://script.google.com/macros/s/AKfycbxYSNLor6DXPKQFwKzBoszkXqHQWdp1FwaBwH3K1U9c1sn22Uqolb11t93BLOTrk6Gcow/exec";
 
     const TEAM_COLORS = {
-      "머독": "#E53935",
-      "수탉": "#F2F2F2",
-      "우정잉": "#2979FF",
-      "끠끼": "#FFD633",
-      "끼끼": "#FFD633"
+      "머독": { color: "#E53935", text: "#ffffff" },
+      "수탉": { color: "#F2F2F2", text: "#111111" },
+      "우정잉": { color: "#2979FF", text: "#ffffff" },
+      "끠끼": { color: "#FFD633", text: "#111111" },
+      "끼끼": { color: "#FFD633", text: "#111111" }
     };
 
     function normalizeTeamName(name) {
       const teamName = String(name || "").trim();
-
-      if (
-        teamName.includes("끼끼") ||
-        teamName.includes("끠끼")
-      ) {
-        return "끠끼 팀";
-      }
-
+      if (teamName.includes("끼끼") || teamName.includes("끠끼")) return "끠끼 팀";
       return teamName;
     }
 
-    function getTeamColor(teamName) {
-
-      const key = Object.keys(TEAM_COLORS)
-        .find(name => teamName.includes(name));
-
-      return TEAM_COLORS[key] || "#ffffff";
+    function getTeamStyle(teamName) {
+      const key = Object.keys(TEAM_COLORS).find(name => teamName.includes(name));
+      return TEAM_COLORS[key] || { color: "#ffffff", text: "#111111" };
     }
 
     function getMedal(rank) {
-
       if (rank === "1") return "🥇";
       if (rank === "2") return "🥈";
       if (rank === "3") return "🥉";
       if (rank === "4") return "☠️";
-
       return "";
     }
 
     async function loadScores() {
-
       try {
-
         const res = await fetch(API_URL + "?t=" + Date.now());
-
         const rows = await res.json();
 
         const board = document.getElementById("scoreboard");
-
         board.innerHTML = "";
 
         rows.forEach(item => {
-
+          const teamName = normalizeTeamName(item.team);
+          const style = getTeamStyle(teamName);
           const rank = String(item.rank || "");
 
-          const teamName = normalizeTeamName(item.team);
+          const box = document.createElement("div");
+          box.className = "teamBox";
+          box.style.setProperty("--team-color", style.color);
+          box.style.setProperty("--text-color", style.text);
 
-          const color = getTeamColor(teamName);
-
-          const team = document.createElement("div");
-
-          team.className = "team";
-
-          team.style.setProperty(
-            "--team-color",
-            color
-          );
-
-          team.innerHTML = `
-            <div class="topLine"></div>
-
-            <div class="rank">
-              ${rank}위
-            </div>
-
-            <div class="medal">
-              ${getMedal(rank)}
-            </div>
-
-            <div class="teamName">
-              ${teamName}
-            </div>
-
-            <div class="scoreWrap">
-              <div class="score">
-                ${item.score}
+          box.innerHTML = `
+            <div class="colorBar"></div>
+            <div class="info">
+              <div class="topLine">
+                <div class="team">${teamName}</div>
+                <div class="rank">${getMedal(rank)} ${rank}위</div>
               </div>
-
-              <div class="point">
-                점
+              <div class="scoreLine">
+                <div class="score">${item.score}</div>
+                <div class="point">점</div>
               </div>
             </div>
-
-            <div class="bottomBar"></div>
           `;
 
-          board.appendChild(team);
-
+          board.appendChild(box);
         });
-
       } catch (error) {
-
-        console.error(error);
-
+        console.error("점수 데이터를 불러오지 못했습니다:", error);
       }
-
     }
 
     loadScores();
-
     setInterval(loadScores, 1000);
-
   </script>
-
 </body>
 </html>
