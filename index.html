@@ -375,7 +375,9 @@
 
         GAME_DATA = data.games || {};
 
-        const rows = data.scores || [];
+        const rows = (data.scores || []).sort((a, b) => {
+  return Number(a.rank) - Number(b.rank);
+});
         const board = document.getElementById("scoreboard");
         board.innerHTML = "";
 
