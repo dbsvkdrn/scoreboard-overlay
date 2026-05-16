@@ -1,8 +1,8 @@
+```html
 <!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-
   <title>Scoreboard</title>
 
   <style>
@@ -339,6 +339,64 @@
       font-weight: 900;
     }
 
+    .roundTeam {
+
+      height: 30px;
+
+      padding: 0 10px;
+
+      border-radius: 999px;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: space-between;
+
+      gap: 8px;
+
+      background:
+        rgba(255,255,255,0.06);
+
+      font-size: 15px;
+
+      white-space: nowrap;
+    }
+
+    .roundTeam strong {
+
+      font-size: 16px;
+
+      font-weight: 900;
+    }
+
+    .teamDot {
+
+      width: 9px;
+
+      height: 9px;
+
+      border-radius: 50%;
+
+      flex-shrink: 0;
+    }
+
+    .roundTeam.red .teamDot {
+      background: #E53935;
+    }
+
+    .roundTeam.white .teamDot {
+      background: #F2F2F2;
+    }
+
+    .roundTeam.blue .teamDot {
+      background: #2979FF;
+    }
+
+    .roundTeam.yellow .teamDot {
+      background: #FFD633;
+    }
+
   </style>
 </head>
 
@@ -446,7 +504,24 @@
 
       if (!game) return;
 
+      const ROUND_COUNT = 5;
+
+      const roundMap = {};
+
       game.rounds.forEach(round => {
+
+        roundMap[
+          String(round.round).trim()
+        ] = round;
+
+      });
+
+      for (let i = 1; i <= ROUND_COUNT; i++) {
+
+        const roundKey = `R${i}`;
+
+        const round =
+          roundMap[roundKey] || {};
 
         const row =
           document.createElement("div");
@@ -455,29 +530,53 @@
 
         row.innerHTML = `
           <div class="roundTitle">
-            ${round.round}
+            ${roundKey}
           </div>
 
-          <div>
-            머독 ${round.murdoc || "-"}위
+          <div class="roundTeam red">
+            <span class="teamDot"></span>
+
+            <span>머독</span>
+
+            <strong>
+              ${round.murdoc || "-"}위
+            </strong>
           </div>
 
-          <div>
-            수탉 ${round.sutak || "-"}위
+          <div class="roundTeam white">
+            <span class="teamDot"></span>
+
+            <span>수탉</span>
+
+            <strong>
+              ${round.sutak || "-"}위
+            </strong>
           </div>
 
-          <div>
-            우정잉 ${round.ujung || "-"}위
+          <div class="roundTeam blue">
+            <span class="teamDot"></span>
+
+            <span>우정잉</span>
+
+            <strong>
+              ${round.ujung || "-"}위
+            </strong>
           </div>
 
-          <div>
-            끠끼 ${round.kkikki || "-"}위
+          <div class="roundTeam yellow">
+            <span class="teamDot"></span>
+
+            <span>끠끼</span>
+
+            <strong>
+              ${round.kkikki || "-"}위
+            </strong>
           </div>
         `;
 
         rounds.appendChild(row);
 
-      });
+      }
 
     }
 
@@ -642,3 +741,4 @@
 
 </body>
 </html>
+```
