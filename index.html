@@ -13,143 +13,156 @@
       margin: 0;
       padding: 0;
       width: 1200px;
-      height: 300px;
+      height: 280px;
       background: transparent !important;
       overflow: hidden;
       font-family: "Malgun Gothic", "Apple SD Gothic Neo", Arial, sans-serif;
     }
 
-    .wrap {
-      width: 1200px;
-      height: 300px;
-      padding: 18px;
+    body {
       display: flex;
-      gap: 14px;
-      align-items: flex-end;
+      align-items: center;
+      justify-content: center;
     }
 
-    .teamCard {
-      flex: 1;
-      position: relative;
-      height: var(--card-height);
-      min-height: 170px;
-      border-radius: 22px 22px 10px 10px;
+    .board {
+      width: 1160px;
+      height: 240px;
+      border-radius: 30px;
+      background:
+        linear-gradient(
+          180deg,
+          rgba(28,32,44,0.96),
+          rgba(10,12,18,0.98)
+        );
+
+      border: 2px solid rgba(255,255,255,0.08);
+
+      backdrop-filter: blur(10px);
+
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
       overflow: hidden;
-      background: rgba(14,16,22,0.96);
-      border: 3px solid var(--team-color);
-      box-shadow: 0 10px 22px rgba(0,0,0,0.45);
+
+      box-shadow:
+        0 18px 40px rgba(0,0,0,0.5),
+        inset 0 1px 0 rgba(255,255,255,0.05);
+    }
+
+    .team {
+      position: relative;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      justify-content: center;
+      align-items: center;
+
+      border-right: 1px solid rgba(255,255,255,0.08);
     }
 
-    .topGlow {
+    .team:last-child {
+      border-right: none;
+    }
+
+    .topLine {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
-      height: 85px;
-      background: linear-gradient(
-        180deg,
-        var(--team-color-glow),
-        rgba(255,255,255,0)
-      );
-      opacity: 0.35;
-      pointer-events: none;
+      height: 8px;
+      background: var(--team-color);
+      box-shadow: 0 0 18px var(--team-color);
     }
 
-    .rankBox {
+    .medal {
+      font-size: 34px;
+      line-height: 1;
+      margin-bottom: 10px;
+    }
+
+    .rank {
       position: absolute;
-      top: 12px;
-      right: 12px;
-      min-width: 82px;
-      height: 42px;
-      border-radius: 999px;
-      background: rgba(0,0,0,0.45);
-      border: 2px solid rgba(255,255,255,0.16);
+      top: 18px;
+      right: 18px;
+
+      width: 58px;
+      height: 58px;
+
+      border-radius: 50%;
+
+      background: rgba(255,255,255,0.06);
+
+      border: 2px solid rgba(255,255,255,0.12);
+
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 5px;
+
       color: white;
       font-size: 20px;
       font-weight: 900;
-      z-index: 2;
-      backdrop-filter: blur(6px);
+
+      backdrop-filter: blur(8px);
     }
 
     .teamName {
-      position: relative;
-      padding-top: 24px;
-      text-align: center;
       color: white;
-      font-size: 32px;
+      font-size: 31px;
       font-weight: 900;
       letter-spacing: -1px;
-      z-index: 1;
+      margin-bottom: 18px;
+      text-align: center;
     }
 
     .scoreWrap {
-      position: relative;
-      padding-bottom: 20px;
       display: flex;
       align-items: flex-end;
-      justify-content: center;
-      gap: 5px;
-      z-index: 1;
+      gap: 6px;
     }
 
     .score {
-      font-size: 78px;
-      font-weight: 900;
-      line-height: 0.85;
-      letter-spacing: -4px;
       color: white;
-      text-shadow: 0 0 16px rgba(255,255,255,0.12);
+      font-size: 88px;
+      font-weight: 900;
+      line-height: 0.82;
+      letter-spacing: -5px;
+      text-shadow:
+        0 0 18px rgba(255,255,255,0.08);
     }
 
     .point {
-      font-size: 26px;
+      color: rgba(255,255,255,0.65);
+      font-size: 24px;
       font-weight: 900;
-      color: rgba(255,255,255,0.7);
-      transform: translateY(-4px);
+      transform: translateY(-8px);
     }
 
-    .baseBar {
+    .bottomBar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
       width: 100%;
-      height: 10px;
+      height: 14px;
       background: var(--team-color);
+      opacity: 0.95;
     }
+
   </style>
 </head>
 
 <body>
-  <div class="wrap" id="scoreboard"></div>
+
+  <div class="board" id="scoreboard"></div>
 
   <script>
+
     const API_URL = "https://script.google.com/macros/s/AKfycbxYSNLor6DXPKQFwKzBoszkXqHQWdp1FwaBwH3K1U9c1sn22Uqolb11t93BLOTrk6Gcow/exec";
 
     const TEAM_COLORS = {
-      "머독": {
-        color: "#E53935",
-        glow: "rgba(229,57,53,0.95)"
-      },
-      "수탉": {
-        color: "#F2F2F2",
-        glow: "rgba(255,255,255,0.9)"
-      },
-      "우정잉": {
-        color: "#2979FF",
-        glow: "rgba(41,121,255,0.95)"
-      },
-      "끠끼": {
-        color: "#FFD633",
-        glow: "rgba(255,214,51,0.95)"
-      },
-      "끼끼": {
-        color: "#FFD633",
-        glow: "rgba(255,214,51,0.95)"
-      }
+      "머독": "#E53935",
+      "수탉": "#F2F2F2",
+      "우정잉": "#2979FF",
+      "끠끼": "#FFD633",
+      "끼끼": "#FFD633"
     };
 
     function normalizeTeamName(name) {
@@ -165,68 +178,62 @@
       return teamName;
     }
 
-    function getTeamStyle(teamName) {
+    function getTeamColor(teamName) {
+
       const key = Object.keys(TEAM_COLORS)
         .find(name => teamName.includes(name));
 
-      return TEAM_COLORS[key] || {
-        color: "#ffffff",
-        glow: "rgba(255,255,255,0.9)"
-      };
+      return TEAM_COLORS[key] || "#ffffff";
     }
 
     function getMedal(rank) {
+
       if (rank === "1") return "🥇";
       if (rank === "2") return "🥈";
       if (rank === "3") return "🥉";
       if (rank === "4") return "☠️";
+
       return "";
     }
 
-    function getHeightByRank(rank) {
-      if (rank === "1") return "260px";
-      if (rank === "2") return "235px";
-      if (rank === "3") return "210px";
-      return "185px";
-    }
-
     async function loadScores() {
+
       try {
+
         const res = await fetch(API_URL + "?t=" + Date.now());
+
         const rows = await res.json();
 
         const board = document.getElementById("scoreboard");
+
         board.innerHTML = "";
 
         rows.forEach(item => {
-          const teamName = normalizeTeamName(item.team);
-          const style = getTeamStyle(teamName);
+
           const rank = String(item.rank || "");
 
-          const card = document.createElement("div");
-          card.className = "teamCard";
+          const teamName = normalizeTeamName(item.team);
 
-          card.style.setProperty(
+          const color = getTeamColor(teamName);
+
+          const team = document.createElement("div");
+
+          team.className = "team";
+
+          team.style.setProperty(
             "--team-color",
-            style.color
+            color
           );
 
-          card.style.setProperty(
-            "--team-color-glow",
-            style.glow
-          );
+          team.innerHTML = `
+            <div class="topLine"></div>
 
-          card.style.setProperty(
-            "--card-height",
-            getHeightByRank(rank)
-          );
-
-          card.innerHTML = `
-            <div class="topGlow"></div>
-
-            <div class="rankBox">
-              ${getMedal(rank)}
+            <div class="rank">
               ${rank}위
+            </div>
+
+            <div class="medal">
+              ${getMedal(rank)}
             </div>
 
             <div class="teamName">
@@ -234,23 +241,35 @@
             </div>
 
             <div class="scoreWrap">
-              <div class="score">${item.score}</div>
-              <div class="point">점</div>
+              <div class="score">
+                ${item.score}
+              </div>
+
+              <div class="point">
+                점
+              </div>
             </div>
 
-            <div class="baseBar"></div>
+            <div class="bottomBar"></div>
           `;
 
-          board.appendChild(card);
+          board.appendChild(team);
+
         });
 
       } catch (error) {
+
         console.error(error);
+
       }
+
     }
 
     loadScores();
+
     setInterval(loadScores, 1000);
+
   </script>
+
 </body>
 </html>
