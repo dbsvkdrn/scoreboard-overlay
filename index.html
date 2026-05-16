@@ -44,6 +44,7 @@
       background: rgba(15, 17, 23, 0.94);
       border: 2px solid rgba(255,255,255,0.18);
       box-shadow: 0 8px 18px rgba(0,0,0,0.36);
+      will-change: transform;
     }
 
     .colorBar { background: var(--team-color); }
@@ -84,6 +85,10 @@
       white-space: nowrap;
     }
 
+    .rank.bump {
+      animation: rankBump 0.45s ease;
+    }
+
     .scoreLine {
       display: flex;
       align-items: flex-end;
@@ -98,6 +103,10 @@
       font-weight: 900;
       line-height: 0.9;
       letter-spacing: -3px;
+    }
+
+    .score.bump {
+      animation: scoreBump 0.45s ease;
     }
 
     .point {
@@ -120,21 +129,30 @@
       font-weight: 900;
       font-size: 18px;
       user-select: none;
+      transition: background 0.22s ease, transform 0.18s ease;
+    }
+
+    .detailToggle:hover {
+      transform: translateY(-2px);
+      background: rgba(28,32,42,0.98);
     }
 
     .detailPanel {
       overflow: hidden;
       max-height: 0;
       opacity: 0;
-      transition: max-height 0.35s ease, opacity 0.25s ease;
+      transition: max-height 0.42s ease, opacity 0.3s ease, transform 0.28s ease;
       border-radius: 18px;
       background: rgba(15,17,23,0.94);
       border: 2px solid rgba(255,255,255,0.16);
+      transform-origin: top center;
+      transform: translateY(-4px) scaleY(0.98);
     }
 
     .detailPanel.open {
       max-height: 760px;
       opacity: 1;
+      transform: translateY(0) scaleY(1);
     }
 
     .gameTabs {
@@ -155,11 +173,17 @@
       cursor: pointer;
       font-weight: 900;
       font-size: 17px;
+      transition: background 0.22s ease, transform 0.18s ease;
+    }
+
+    .gameTab:hover {
+      transform: translateY(-2px);
+      background: rgba(255,255,255,0.12);
     }
 
     .gameTab.active {
       background: #2979FF;
-      box-shadow: 0 0 12px rgba(41,121,255,0.45);
+      box-shadow: 0 0 14px rgba(41,121,255,0.45);
     }
 
     .rounds {
@@ -228,149 +252,18 @@
       flex-shrink: 0;
       background: var(--dot-color);
     }
-/* =========================
-   팀 카드
-========================= */
 
-.teamBox {
+    @keyframes scoreBump {
+      0% { transform: scale(1); }
+      45% { transform: scale(1.16); color: #ffffff; }
+      100% { transform: scale(1); }
+    }
 
-  transition:
-    transform 0.22s ease,
-    box-shadow 0.22s ease,
-    border-color 0.22s ease;
-}
-
-.teamBox:hover {
-
-  transform:
-    translateY(-3px);
-
-  box-shadow:
-    0 14px 28px rgba(0,0,0,0.42);
-}
-
-/* =========================
-   GAME DETAIL 버튼
-========================= */
-
-.detailToggle {
-
-  transition:
-    background 0.22s ease,
-    transform 0.18s ease,
-    box-shadow 0.22s ease;
-}
-
-.detailToggle:hover {
-
-  transform:
-    translateY(-2px);
-
-  background:
-    rgba(28,32,42,0.98);
-
-  box-shadow:
-    0 0 18px rgba(255,255,255,0.08);
-}
-
-/* =========================
-   게임 탭
-========================= */
-
-.gameTab {
-
-  transition:
-    transform 0.18s ease,
-    background 0.22s ease,
-    box-shadow 0.22s ease;
-}
-
-.gameTab:hover {
-
-  transform:
-    translateY(-2px);
-
-  background:
-    rgba(255,255,255,0.12);
-}
-
-.gameTab.active {
-
-  background: #2979FF;
-
-  box-shadow:
-    0 0 14px rgba(41,121,255,0.45);
-}
-
-/* =========================
-   라운드 줄
-========================= */
-
-.roundRow {
-
-  transition:
-    background 0.2s ease,
-    transform 0.18s ease;
-}
-
-.roundRow:hover {
-
-  background:
-    rgba(255,255,255,0.08);
-
-  transform:
-    translateX(4px);
-}
-
-/* =========================
-   라운드 팀 박스
-========================= */
-
-.placeBox {
-
-  transition:
-    transform 0.18s ease,
-    background 0.18s ease,
-    border-color 0.18s ease;
-}
-
-.placeBox:hover {
-
-  transform:
-    translateY(-2px);
-
-  background:
-    rgba(255,255,255,0.11);
-
-  border-color:
-    rgba(255,255,255,0.18);
-}
-
-/* =========================
-   PANEL 펼침
-========================= */
-
-.detailPanel {
-
-  transform-origin: top center;
-
-  transition:
-    max-height 0.42s ease,
-    opacity 0.3s ease,
-    transform 0.28s ease;
-}
-
-.detailPanel.open {
-
-  transform:
-    translateY(0px) scaleY(1);
-}
-
-.detailPanel:not(.open) {
-
-  transform:
-    translateY(-4px) scaleY(0.98);
-}
+    @keyframes rankBump {
+      0% { transform: scale(1); }
+      45% { transform: scale(1.12); }
+      100% { transform: scale(1); }
+    }
   </style>
 </head>
 
@@ -394,6 +287,7 @@
 
     let GAME_DATA = {};
     let CURRENT_GAME = "1";
+    let PREV_STATE = {};
 
     const TEAM_COLORS = {
       "머독": { color: "#E53935", text: "#ffffff" },
@@ -511,6 +405,91 @@
       });
     }
 
+    function renderScoreboard(rows) {
+      const board = document.getElementById("scoreboard");
+
+      const oldPositions = {};
+      board.querySelectorAll(".teamBox").forEach(box => {
+        oldPositions[box.dataset.team] = box.getBoundingClientRect();
+      });
+
+      board.innerHTML = "";
+
+      rows.forEach(item => {
+        const teamName = normalizeTeamName(item.team);
+        const style = getTeamStyle(teamName);
+        const rank = String(item.rank || "");
+        const score = String(item.score || "0");
+
+        const prev = PREV_STATE[teamName];
+
+        const scoreChanged = prev && String(prev.score) !== score;
+        const rankChanged = prev && String(prev.rank) !== rank;
+
+        const box = document.createElement("div");
+        box.className = "teamBox";
+        box.dataset.team = teamName;
+
+        box.style.setProperty("--team-color", style.color);
+        box.style.setProperty("--text-color", style.text);
+
+        box.innerHTML = `
+          <div class="colorBar"></div>
+
+          <div class="info">
+            <div class="topLine">
+              <div class="team">${teamName}</div>
+              <div class="rank ${rankChanged ? "bump" : ""}">
+                ${getMedal(rank)} ${rank}위
+              </div>
+            </div>
+
+            <div class="scoreLine">
+              <div class="score ${scoreChanged ? "bump" : ""}">
+                ${score}
+              </div>
+              <div class="point">점</div>
+            </div>
+          </div>
+        `;
+
+        board.appendChild(box);
+      });
+
+      requestAnimationFrame(() => {
+        board.querySelectorAll(".teamBox").forEach(box => {
+          const oldRect = oldPositions[box.dataset.team];
+          const newRect = box.getBoundingClientRect();
+
+          if (!oldRect) return;
+
+          const dx = oldRect.left - newRect.left;
+          const dy = oldRect.top - newRect.top;
+
+          if (Math.abs(dx) < 1 && Math.abs(dy) < 1) return;
+
+          box.style.transition = "none";
+          box.style.transform = `translate(${dx}px, ${dy}px)`;
+
+          requestAnimationFrame(() => {
+            box.style.transition = "transform 0.55s cubic-bezier(0.22, 1, 0.36, 1)";
+            box.style.transform = "translate(0, 0)";
+          });
+        });
+      });
+
+      const nextState = {};
+      rows.forEach(item => {
+        const teamName = normalizeTeamName(item.team);
+        nextState[teamName] = {
+          score: String(item.score || "0"),
+          rank: String(item.rank || "")
+        };
+      });
+
+      PREV_STATE = nextState;
+    }
+
     async function loadScores() {
       try {
         const res = await fetch(API_URL + "?t=" + Date.now());
@@ -519,37 +498,10 @@
         GAME_DATA = data.games || {};
 
         const rows = (data.scores || []).sort((a, b) => {
-  return Number(a.rank) - Number(b.rank);
-});
-        const board = document.getElementById("scoreboard");
-        board.innerHTML = "";
-
-        rows.forEach(item => {
-          const teamName = normalizeTeamName(item.team);
-          const style = getTeamStyle(teamName);
-          const rank = String(item.rank || "");
-
-          const box = document.createElement("div");
-          box.className = "teamBox";
-          box.style.setProperty("--team-color", style.color);
-          box.style.setProperty("--text-color", style.text);
-
-          box.innerHTML = `
-            <div class="colorBar"></div>
-            <div class="info">
-              <div class="topLine">
-                <div class="team">${teamName}</div>
-                <div class="rank">${getMedal(rank)} ${rank}위</div>
-              </div>
-              <div class="scoreLine">
-                <div class="score">${item.score}</div>
-                <div class="point">점</div>
-              </div>
-            </div>
-          `;
-
-          board.appendChild(box);
+          return Number(a.rank) - Number(b.rank);
         });
+
+        renderScoreboard(rows);
 
         const tabs = document.getElementById("gameTabs");
         tabs.innerHTML = "";
@@ -567,6 +519,7 @@
         });
 
         renderGame(CURRENT_GAME);
+
       } catch (error) {
         console.error(error);
       }
