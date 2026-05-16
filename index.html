@@ -11,75 +11,33 @@
       margin: 0;
       padding: 0;
       width: 1200px;
-      height: 360px;
+      height: 150px;
       background: transparent !important;
       font-family: "Malgun Gothic", "Apple SD Gothic Neo", Arial, sans-serif;
       overflow: hidden;
     }
 
-    .wrap {
+    .board {
       width: 1200px;
-      height: 360px;
-      padding: 20px;
+      height: 150px;
+      padding: 16px;
       display: grid;
-      grid-template-columns: 1fr 220px 1fr;
-      gap: 18px;
-      align-items: center;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
     }
 
-    .side {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-
-    .center {
-      height: 230px;
-      border-radius: 28px;
-      background: rgba(10, 12, 18, 0.92);
-      border: 2px solid rgba(255,255,255,0.2);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      box-shadow: 0 12px 30px rgba(0,0,0,0.5);
-    }
-
-    .center .small {
-      font-size: 18px;
-      font-weight: 900;
-      letter-spacing: 3px;
-      color: rgba(255,255,255,0.65);
-    }
-
-    .center .main {
-      margin-top: 6px;
-      font-size: 54px;
-      font-weight: 900;
-      letter-spacing: -3px;
-    }
-
-    .center .sub {
-      margin-top: 8px;
-      font-size: 18px;
-      font-weight: 800;
-      color: rgba(255,255,255,0.65);
-    }
-
-    .teamCard {
-      height: 145px;
+    .team {
       display: grid;
-      grid-template-columns: 92px 1fr;
-      border-radius: 24px;
+      grid-template-columns: 72px 1fr;
+      border-radius: 18px;
       overflow: hidden;
-      background: rgba(17, 19, 26, 0.96);
+      background: rgba(12, 14, 20, 0.94);
       border: 3px solid var(--team-color);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.38);
       color: white;
-      box-shadow: 0 10px 22px rgba(0,0,0,0.42);
     }
 
-    .rankBox {
+    .rank {
       background: var(--team-color);
       color: var(--text-color);
       display: flex;
@@ -90,25 +48,24 @@
     }
 
     .medal {
-      font-size: 34px;
+      font-size: 30px;
       line-height: 1;
     }
 
-    .rank {
-      margin-top: 5px;
-      font-size: 25px;
+    .rankText {
+      margin-top: 4px;
+      font-size: 20px;
       line-height: 1;
     }
 
     .info {
-      padding: 16px 18px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
+      padding: 12px 14px;
+      display: grid;
+      grid-template-rows: 32px 1fr;
     }
 
-    .team {
-      font-size: 30px;
+    .name {
+      font-size: 25px;
       font-weight: 900;
       letter-spacing: -1px;
       white-space: nowrap;
@@ -118,18 +75,18 @@
       display: flex;
       align-items: flex-end;
       justify-content: flex-end;
-      gap: 5px;
+      gap: 4px;
     }
 
     .score {
-      font-size: 60px;
+      font-size: 58px;
       font-weight: 900;
-      line-height: 0.86;
+      line-height: 0.9;
       letter-spacing: -3px;
     }
 
     .point {
-      font-size: 23px;
+      font-size: 21px;
       font-weight: 900;
       opacity: 0.75;
       transform: translateY(-2px);
@@ -138,17 +95,7 @@
 </head>
 
 <body>
-  <div class="wrap">
-    <div class="side" id="left"></div>
-
-    <div class="center">
-      <div class="small">LIVE SCORE</div>
-      <div class="main">운동회</div>
-      <div class="sub">TEAM RANKING BOARD</div>
-    </div>
-
-    <div class="side" id="right"></div>
-  </div>
+  <div class="board" id="scoreboard"></div>
 
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbxYSNLor6DXPKQFwKzBoszkXqHQWdp1FwaBwH3K1U9c1sn22Uqolb11t93BLOTrk6Gcow/exec";
@@ -180,51 +127,40 @@
       return "";
     }
 
-    function makeCard(item) {
-      const teamName = normalizeTeamName(item.team);
-      const style = getTeamStyle(teamName);
-      const rank = String(item.rank || "");
-
-      const card = document.createElement("div");
-      card.className = "teamCard";
-      card.style.setProperty("--team-color", style.color);
-      card.style.setProperty("--text-color", style.text);
-
-      card.innerHTML = `
-        <div class="rankBox">
-          <div class="medal">${getMedal(rank)}</div>
-          <div class="rank">${rank}위</div>
-        </div>
-
-        <div class="info">
-          <div class="team">${teamName}</div>
-          <div class="scoreLine">
-            <div class="score">${item.score}</div>
-            <div class="point">점</div>
-          </div>
-        </div>
-      `;
-
-      return card;
-    }
-
     async function loadScores() {
       try {
         const res = await fetch(API_URL + "?t=" + Date.now());
         const rows = await res.json();
 
-        const left = document.getElementById("left");
-        const right = document.getElementById("right");
+        const board = document.getElementById("scoreboard");
+        board.innerHTML = "";
 
-        left.innerHTML = "";
-        right.innerHTML = "";
+        rows.forEach(item => {
+          const teamName = normalizeTeamName(item.team);
+          const style = getTeamStyle(teamName);
+          const rank = String(item.rank || "");
 
-        rows.forEach((item, index) => {
-          if (index < 2) {
-            left.appendChild(makeCard(item));
-          } else {
-            right.appendChild(makeCard(item));
-          }
+          const card = document.createElement("div");
+          card.className = "team";
+          card.style.setProperty("--team-color", style.color);
+          card.style.setProperty("--text-color", style.text);
+
+          card.innerHTML = `
+            <div class="rank">
+              <div class="medal">${getMedal(rank)}</div>
+              <div class="rankText">${rank}위</div>
+            </div>
+
+            <div class="info">
+              <div class="name">${teamName}</div>
+              <div class="scoreLine">
+                <div class="score">${item.score}</div>
+                <div class="point">점</div>
+              </div>
+            </div>
+          `;
+
+          board.appendChild(card);
         });
       } catch (error) {
         console.error("점수 데이터를 불러오지 못했습니다:", error);
