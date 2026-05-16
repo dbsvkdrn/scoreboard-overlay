@@ -4,6 +4,10 @@
   <meta charset="UTF-8" />
   <title>Scoreboard</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       background: transparent;
@@ -15,47 +19,89 @@
       width: 1200px;
       height: 260px;
       display: flex;
-      gap: 18px;
-      padding: 20px;
-      box-sizing: border-box;
+      gap: 16px;
+      padding: 18px;
     }
 
     .card {
       flex: 1;
-      border-radius: 24px;
-      background: linear-gradient(180deg, #1b1b24, #09090d);
-      border: 4px solid var(--team-color);
-      box-shadow: 0 0 22px var(--team-color);
+      position: relative;
+      border-radius: 22px;
+      background: #111318;
+      border: 5px solid var(--team-color);
       color: white;
       text-align: center;
       overflow: hidden;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.45);
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        180deg,
+        var(--team-color-alpha),
+        rgba(0,0,0,0) 45%
+      );
+      opacity: 0.22;
+      pointer-events: none;
     }
 
     .team {
-      padding: 18px 8px;
-      font-size: 32px;
-      font-weight: 900;
+      position: relative;
+      height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       background: var(--team-color);
-      color: #111;
+      color: var(--text-color);
+      font-size: 30px;
+      font-weight: 900;
+      letter-spacing: -1px;
     }
 
     .score {
+      position: relative;
       margin-top: 22px;
-      font-size: 72px;
+      font-size: 74px;
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -3px;
+    }
+
+    .score span {
+      font-size: 28px;
+      margin-left: 4px;
+      letter-spacing: 0;
+      opacity: 0.9;
+    }
+
+    .rank {
+      position: relative;
+      width: 170px;
+      margin: 18px auto 0;
+      padding: 8px 0;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.12);
+      border: 2px solid rgba(255,255,255,0.35);
+      font-size: 32px;
       font-weight: 900;
       line-height: 1;
     }
 
-    .score span {
-      font-size: 32px;
-      margin-left: 4px;
+    .rank.first {
+      background: #ffd84f;
+      color: #111;
+      border-color: #fff2a6;
     }
 
-    .rank {
-      margin-top: 18px;
-      font-size: 34px;
-      font-weight: 900;
-      opacity: 0.95;
+    .label {
+      position: relative;
+      margin-top: 8px;
+      font-size: 15px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.6);
     }
   </style>
 </head>
@@ -65,6 +111,22 @@
 
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbxYSNLor6DXPKQFwKzBoszkXqHQWdp1FwaBwH3K1U9c1sn22Uqolb11t93BLOTrk6Gcow/exec";
+
+    const TEAM_COLORS = {
+      "머독": { color: "#E53935", alpha: "rgba(229,57,53,0.9)", text: "#ffffff" },
+      "수탉": { color: "#F5F5F5", alpha: "rgba(245,245,245,0.9)", text: "#111111" },
+      "우정잉": { color: "#2979FF", alpha: "rgba(41,121,255,0.9)", text: "#ffffff" },
+      "끠끼": { color: "#FFD633", alpha: "rgba(255,214,51,0.9)", text: "#111111" }
+    };
+
+    function getTeamStyle(teamName) {
+      const key = Object.keys(TEAM_COLORS).find(name => teamName.includes(name));
+      return TEAM_COLORS[key] || {
+        color: "#ffffff",
+        alpha: "rgba(255,255,255,0.9)",
+        text: "#111111"
+      };
+    }
 
     function getMedal(rank) {
       if (rank === "1") return "🥇";
@@ -83,14 +145,22 @@
         board.innerHTML = "";
 
         rows.forEach(item => {
+          const style = getTeamStyle(String(item.team));
+          const rank = String(item.rank);
+
           const card = document.createElement("div");
           card.className = "card";
-          card.style.setProperty("--team-color", item.color || "#ffffff");
+          card.style.setProperty("--team-color", style.color);
+          card.style.setProperty("--team-color-alpha", style.alpha);
+          card.style.setProperty("--text-color", style.text);
 
           card.innerHTML = `
             <div class="team">${item.team}</div>
             <div class="score">${item.score}<span>점</span></div>
-            <div class="rank">${getMedal(String(item.rank))} ${item.rank}위</div>
+            <div class="rank ${rank === "1" ? "first" : ""}">
+              ${getMedal(rank)} ${rank}위
+            </div>
+            <div class="label">CURRENT RANK</div>
           `;
 
           board.appendChild(card);
