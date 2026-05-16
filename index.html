@@ -228,14 +228,12 @@
       flex-shrink: 0;
       background: var(--dot-color);
     }
-    /* =========================
-   전체 부드러운 애니메이션
+/* =========================
+   등장 애니메이션만 유지
 ========================= */
 
 .teamBox {
-  animation:
-    cardFade 0.45s ease,
-    cardFloat 3.6s ease-in-out infinite;
+  animation: cardFade 0.45s ease;
 
   transition:
     transform 0.22s ease,
@@ -245,60 +243,9 @@
 
 .teamBox:hover {
   transform: translateY(-3px);
+
   box-shadow:
     0 14px 28px rgba(0,0,0,0.42);
-}
-
-/* =========================
-   팀 컬러 바 반짝임
-========================= */
-
-.colorBar {
-  position: relative;
-  overflow: hidden;
-}
-
-.colorBar::after {
-  content: "";
-
-  position: absolute;
-
-  top: -20%;
-  left: -120%;
-
-  width: 60%;
-  height: 140%;
-
-  background:
-    linear-gradient(
-      90deg,
-      rgba(255,255,255,0),
-      rgba(255,255,255,0.45),
-      rgba(255,255,255,0)
-    );
-
-  transform: rotate(14deg);
-
-  animation:
-    shine 3.2s linear infinite;
-}
-
-/* =========================
-   점수 숨쉬기 효과
-========================= */
-
-.score {
-  animation:
-    scorePulse 2.2s ease-in-out infinite;
-}
-
-/* =========================
-   순위 배지 부드러운 떠다님
-========================= */
-
-.rank {
-  animation:
-    rankFloat 2.8s ease-in-out infinite;
 }
 
 /* =========================
@@ -306,6 +253,7 @@
 ========================= */
 
 .detailToggle {
+
   transition:
     background 0.22s ease,
     transform 0.18s ease,
@@ -324,7 +272,7 @@
 }
 
 /* =========================
-   게임 탭 애니메이션
+   게임 탭
 ========================= */
 
 .gameTab {
@@ -345,12 +293,14 @@
 
 .gameTab.active {
 
-  animation:
-    activeGlow 1.8s ease-in-out infinite;
+  background: #2979FF;
+
+  box-shadow:
+    0 0 14px rgba(41,121,255,0.45);
 }
 
 /* =========================
-   라운드 줄 등장 애니메이션
+   라운드 줄
 ========================= */
 
 .roundRow {
@@ -373,7 +323,7 @@
 }
 
 /* =========================
-   팀 박스 hover
+   라운드 팀 박스
 ========================= */
 
 .placeBox {
@@ -397,17 +347,7 @@
 }
 
 /* =========================
-   팀 컬러 점 반짝
-========================= */
-
-.teamDot {
-
-  animation:
-    dotBlink 2.4s ease-in-out infinite;
-}
-
-/* =========================
-   PANEL 펼침 애니메이션 강화
+   PANEL 펼침
 ========================= */
 
 .detailPanel {
@@ -439,98 +379,19 @@
 @keyframes cardFade {
 
   from {
+
     opacity: 0;
+
     transform:
       translateY(12px);
   }
 
   to {
+
     opacity: 1;
+
     transform:
       translateY(0);
-  }
-}
-
-@keyframes cardFloat {
-
-  0% {
-    transform:
-      translateY(0px);
-  }
-
-  50% {
-    transform:
-      translateY(-2px);
-  }
-
-  100% {
-    transform:
-      translateY(0px);
-  }
-}
-
-@keyframes shine {
-
-  0% {
-    left: -120%;
-  }
-
-  100% {
-    left: 170%;
-  }
-}
-
-@keyframes scorePulse {
-
-  0% {
-    transform:
-      scale(1);
-  }
-
-  50% {
-    transform:
-      scale(1.035);
-  }
-
-  100% {
-    transform:
-      scale(1);
-  }
-}
-
-@keyframes rankFloat {
-
-  0% {
-    transform:
-      translateY(0px);
-  }
-
-  50% {
-    transform:
-      translateY(-1px);
-  }
-
-  100% {
-    transform:
-      translateY(0px);
-  }
-}
-
-@keyframes activeGlow {
-
-  0% {
-    box-shadow:
-      0 0 0 rgba(41,121,255,0.2);
-  }
-
-  50% {
-    box-shadow:
-      0 0 18px rgba(41,121,255,0.55);
-  }
-
-  100% {
-    box-shadow:
-      0 0 0 rgba(41,121,255,0.2);
   }
 }
 
@@ -550,30 +411,6 @@
 
     transform:
       translateY(0px);
-  }
-}
-
-@keyframes dotBlink {
-
-  0% {
-    transform:
-      scale(1);
-
-    opacity: 1;
-  }
-
-  50% {
-    transform:
-      scale(1.22);
-
-    opacity: 0.7;
-  }
-
-  100% {
-    transform:
-      scale(1);
-
-    opacity: 1;
   }
 }
   </style>
